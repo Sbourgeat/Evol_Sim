@@ -5,7 +5,7 @@ Files organization :
 
 - The output file contains the genomic data of the replicates and the original population. If we need an output after n generations and for 10 replicates, we’ll get : base_F0   Rep1_F0  base_F0  Rep2_F0 …… baseF_10  Rep10_F10
 
-- Examples of input codes are given in the file: CODES 
+- Examples of input codes are given in the file: Tutorial_Code 
 
 - To perform a CMH test with the data obtained after simulation we have to:
 	1) Use Popoolation script to get the .rin file
