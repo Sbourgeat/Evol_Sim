@@ -1,6 +1,18 @@
 # Evol_Sim
 Guide to use MimicrEE2 with some codes that will help you simulate and analyse the data quickly!
 
+Important addresses:
+https://sourceforge.net/p/mimicree2/wiki/Home/
+https://sourceforge.net/p/popoolation2/wiki/Main/
+
+Prerequisites:
+	- Python 2 and 3
+	- Perl
+	- Java
+	- R
+	- RStudio
+	- MacOS or Linux recommended!
+
 Files organization :
 
 - The output file of MimicrEE2 contains the genomic data of the replicates and the original population. If we need an output after n generations and for 10 replicates, we’ll get : base_F0   Rep1_F0  base_F0  Rep2_F0 …… baseF_10  Rep10_F10
