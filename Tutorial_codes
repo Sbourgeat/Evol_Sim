@@ -1,0 +1,58 @@
+############################################################################################################
+#                                                                                                          #
+# Example of codes needed to run a truncating selection simulation with a defined number of causative SNPs #
+#                                                                                                          #
+############################################################################################################
+
+# MimicrEE2 simulation
+
+## Randomly select SNPs and assign effect size following gamma distribution
+## Don't forget to download the gamma_distribution and pick_random_snps_mim2_freq python scripts at: https://sourceforge.net/projects/mimicree2/files/Walkthrough_ROC_curves/Software/
+
+
+mkdir gamma_values
+python2 software/gamma_distribution.py --num-values 100  --output Replicate_runs_500/gamma_values/gamma_values_${i}.txt --shape 0.4
+
+mkdir effect_sizes
+python2 software/pick_random_snps_mim2_freq.py --input Replicate_runs_500/input_files/2R_subset --output effect-size --snp-number 100 --gamma-input gamma_values/gamma_values.txt --first-filter 1 --output-freq effect_sizes/frequency_file.txt
+
+
+
+## Simulating 1000 SNPs with 80% truncating selection
+
+java -jar mim2.jar qt --haplotypes-g0 'Put your haplotype file here' --recombination-rate 'Put your recombination rate file here'  --effect-size 'Put the file containing the effect sizes of all the causative SNPs here' --heritability 1 --snapshots 10,20,30,40,50,60,70,80,90,100 --replicate-runs 10 --output-sync 'Directory for the output file finishing by .sync' --threads 8 --selection-regime 'Selection regime file'--sex 'Sex ratio file'
+
+
+######## Analysis part #######
+
+#unzip the sync file
+
+gzip -dc file.sync > file.unz.sync
+
+# CMH test using popoolation
+## The parameter population is the most important! With a CMH test we compare the alleles frequencies of the initial population with the evolved population.
+## Thus if we want to compare the evolution of the frequencies of the selected alleles after 50 and 100 generations, we'll have to perform 2 CMH-test
+## To specify the generations compared, we tune the population parameter as follows, replicate1_F0-replicate1_F50, replicate2_F0-replicate2_F50 ..., replicate10_F0-replicate10_F50
+## replicate2_F0-replicate2_F50 represents the column number where you find the frequency of the allele in the unziped sync file.
+
+perl popoolation/cmh-test.pl --input file.unz.sync --output result.cmh --min-count 1 --min-coverage 1 --max-coverage 5000 --population 1-2,3-4,5-6,7-8,9-10,11-12,13-14,15-16,17-18,19-20
+
+
+## Be careful, popoolation does not allow us to compute the CMH score in log values. So we have to do it manually with the following steps (python3!):
+
+# 1) Reformat the CMH file to perform the CMH test on R with the script cmh.R
+
+mkdir cmh_files
+
+python format_cmh.py --input file.cmh.rin > cmh_files/G.R 
+R --vanilla --slave < cmh_files/G.R > cmh_files/output.txt
+
+# 2) Reformat the final CMH file made by popoolation 
+
+cd -
+
+python software/reformat_cmh.py --input_cmh file.cmh --input_pvals cmh_files/output.txt > cmh_files/file_corrected.cmh
+
+# Then use the script Analyse.R to create the Manhattan plot
+
+
