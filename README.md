@@ -8,15 +8,10 @@ https://sourceforge.net/p/popoolation2/wiki/Main/
 Prerequisites:
 
 	- Python 2 and 3
-	
 	- Perl
-	
 	- Java
-	
 	- R
-	
 	- RStudio
-	
 	- MacOS or Linux recommended!
 
 Files organization :
